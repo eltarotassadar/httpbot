@@ -97,7 +97,7 @@ if __name__ == "__main__":
     get_answer()
     
 
-PORT = int(os.environ.get('PORT', 3000))
+PORT = int(os.environ.get('PORT', 5000))
 updater.start_webhook(listen="0.0.0.0",
                       port=int(PORT),
                       url_path='1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
