@@ -1,4 +1,5 @@
 import logging
+import re
 import os
 import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, dispatcher
@@ -14,7 +15,6 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-
 
 
 
@@ -40,14 +40,10 @@ def help(update, context):
 
 
 
-def echo(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
-    echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
 
-    client = RelinkClient()
-    shortened_url = client.shorten_url(echo_handler)
-    client.get_full_url(shortened_url)
-    update.message.reply_text("Вот твоя сокращенная ссылка - " + shortened_url)
+    
+
+
 
 
 
@@ -55,14 +51,23 @@ def echo(update, context):
 
 
 def message(update, context):
-    pass
+  text = update.message.text
+  client = RelinkClient()
+  shortened_url = client.shorten_url(text)
+  client.get_full_url(shortened_url)
+  update.message.reply_text("Вот твоя сокращенная ссылка - " + shortened_url)
+  
+  
+ 
 
 
 
 
 
 def error(update, context):
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
+  logger.warning('Update "%s" caused error "%s"', update, context.error)
+  
+    
 
 
 
@@ -76,16 +81,17 @@ def get_answer():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # on different commands - answer in Telegram
+    # хендлеры под /start и /help
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
 
-    # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, message))
+    # хендлер для сообщений
+    dp.add_handler(MessageHandler(Filters.regex(r'http'), message))
 
-    # log all errors
+    # для ошибок
     dp.add_error_handler(error)
-  
+    
+    # подключаемся к Heroku
     updater.start_webhook(listen="0.0.0.0",
                       port=int(PORT),
                       url_path='1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
@@ -97,7 +103,7 @@ def get_answer():
 
 
 
-
+# при использовании файла напрямую
 if __name__ == "__main__":
     get_answer()
     
