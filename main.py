@@ -4,6 +4,8 @@ import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, dispatcher
 from relink.client import RelinkClient
 
+print(zhopa)
+
 
 PORT = int(os.environ.get('PORT', 5000))
 
