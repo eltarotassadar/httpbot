@@ -97,7 +97,9 @@ if __name__ == "__main__":
     get_answer()
     
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Our app is running on port ${ PORT }`);
-});
+PORT = int(os.environ.get('PORT', 3000))
+updater.start_webhook(listen="0.0.0.0",
+                      port=int(PORT),
+                      url_path='1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
+updater.bot.setWebhook('https://httpdwhbot.herokuapp.com/' + '1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
+updater.idle()
