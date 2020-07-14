@@ -1,1 +1,1 @@
-bot: python main.py $PORT
+bot: python main.py 
