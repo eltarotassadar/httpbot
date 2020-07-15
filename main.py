@@ -61,7 +61,7 @@ class DatabaseUseage:
     
   
   def adding(self, id):
-        self.users.execute('INSERT INTO url_list(id, user_id, abbr_url) VALUES("' + id +'", "' + shortened_url + '")')
+        self.users.execute('INSERT INTO url_list(user_id, abbr_url) VALUES("' + id +'", "' + shortened_url + '")')
         self.database.commit()
   
       
