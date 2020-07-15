@@ -20,9 +20,7 @@ logger = logging.getLogger(__name__)
 
 def start(update, context):
     'Что же произойдет, когда будет дана команда /start ?'
-    base = DatabaseUseage()
-    base.adding()
-
+   
     update.message.reply_text("*Привет!*\n"
                               "Я бот, который сокращает ссылки.\n"
                               "Зачем это нужно? Здесь ответы - https://rel.ink/kbvZpP (а вот и пример сокращенной ссылки!).\n"
@@ -43,14 +41,17 @@ def help(update, context):
 
 def show(update, context):
     base = DatabaseUseage()
-    meow = base.show()
-    update.message.reply_text(meow)
+    meow = base.show(str(update.message.from_user.id))
+    update.message.reply_text(meow) #MarkDown
 
 
 def message(update, context):
+    
     text = update.message.text
     client = RelinkClient()
     shortened_url = client.shorten_url(text)
+    base = DatabaseUseage()
+    base.adding(str(update.message.from_user.id), shortened_url)
     client.get_full_url(shortened_url)
     update.message.reply_text("Вот твоя сокращенная ссылка - " + shortened_url)
 
@@ -71,8 +72,8 @@ class DatabaseUseage():
         self.users.execute('INSERT INTO url_list(user_id, abbr_url) VALUES("' + id + '", "' + shortened_url + '")')
         self.database.commit()
 
-    def show(self, id, user_id):
-        result = self.users.execute('SELECT TOP 10 * FROM url_list WHERE user_id = "' + id + '" ORDER BY "' + user_id + '" ').fetchall()
+    def show(self, id):
+        result = self.users.execute('SELECT * FROM url_list WHERE user_id = "' + id + '" ORDER BY id DESC LIMIT 10').fetchall()
         return result
         
 
