@@ -49,7 +49,7 @@ def show(update, context):
 #       number += 1
       
       
-    update.message.reply_text(meow)
+    update.message.reply_text("ВОт последние 10 ссылок, которые я сократил для тебя\n",meow)
 
 
 def message(update, context):
