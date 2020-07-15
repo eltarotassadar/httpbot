@@ -6,21 +6,22 @@ import re
 import os
 import telegram
 
-
-#variables-------------------------------------
+# variables-------------------------------------
 
 PORT = int(os.environ.get('PORT', 5000))
-
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
-#-----------------Telegram Bot-----------------
+
+# -----------------Telegram Bot-----------------
 
 def start(update, context):
     'Что же произойдет, когда будет дана команда /start ?'
+    base = DatabaseUseage()
+    base.adding()
 
     update.message.reply_text("*Привет!*\n"
                               "Я бот, который сокращает ссылки.\n"
@@ -38,38 +39,41 @@ def help(update, context):
 
 
 
+
+def show(update, context):
+    base = DatabaseUseage()
+    base.show()
+
+
 def message(update, context):
-  text = update.message.text
-  client = RelinkClient()
-  shortened_url = client.shorten_url(text)
-  client.get_full_url(shortened_url)
-  update.message.reply_text("Вот твоя сокращенная ссылка - " + shortened_url)
-  
-  
+    text = update.message.text
+    client = RelinkClient()
+    shortened_url = client.shorten_url(text)
+    client.get_full_url(shortened_url)
+    update.message.reply_text("Вот твоя сокращенная ссылка - " + shortened_url)
+
 
 def error(update, context):
-  logger.warning('Update "%s" caused error "%s"', update, context.error)
-  
-  
-#-----------------Inner Logic-------------------
- 
-class DatabaseUseage:
-  
-  def __init__(self):
-    self.database = sql.connect('url-s.db')
-    self.users = self.database.cursor()
-    
-  
-  def adding(self, id):
-        self.users.execute('INSERT INTO url_list(user_id, abbr_url) VALUES("' + id +'", "' + shortened_url + '")')
-        self.database.commit()
-  
-      
-        
-  
-  
+    logger.warning('Update "%s" caused error "%s"', update, context.error)
 
-#-----------------Start App---------------------
+
+# -----------------Inner Logic-------------------
+
+class DatabaseUseage():
+
+    def __init__(self):
+        self.database = sql.connect('url-s.db')
+        self.users = self.database.cursor()
+
+    def adding(self, id, shortened_url):
+        self.users.execute('INSERT INTO url_list(user_id, abbr_url) VALUES("' + id + '", "' + shortened_url + '")')
+        self.database.commit()
+
+    def show(self, id, user_id):
+        self.users.execute('SELECT TOP 10 * FROM url_list WHERE user_id = "' + id + '" ORDER BY "' + user_id + '" ').fetchall()
+
+
+# -----------------Start App---------------------
 
 
 def get_answer():
@@ -82,20 +86,21 @@ def get_answer():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # хендлеры под /start и /help
+    # хендлеры под /start, /help и /show
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("show", show))
 
     # хендлер для сообщений
     dp.add_handler(MessageHandler(Filters.regex(r'http'), message))
 
     # для ошибок
     dp.add_error_handler(error)
-    
+
     # подключаемся к Heroku
     updater.start_webhook(listen="0.0.0.0",
-                      port=int(PORT),
-                      url_path='1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
+                          port=int(PORT),
+                          url_path='1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
     updater.bot.setWebhook('https://httpdwhbot.herokuapp.com/' + '1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
@@ -103,9 +108,8 @@ def get_answer():
     updater.idle()
 
 
-
 # при использовании файла напрямую
 if __name__ == "__main__":
     get_answer()
-    
+
 
