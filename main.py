@@ -43,8 +43,8 @@ def help(update, context):
 
 def show(update, context):
     base = DatabaseUseage()
-    base.show()
-    
+    meow = base.show()
+    update.message.reply_text(meow)
 
 
 def message(update, context):
