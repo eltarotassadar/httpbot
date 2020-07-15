@@ -42,14 +42,14 @@ def help(update, context):
 def show(update, context):
     base = DatabaseUseage()
     meow = base.show(str(update.message.from_user.id))
-#     number = 1
-#     text = ''
-#     for url in meow:
-#       text = text + number + ') ' + url + '\n'
-#       number += 1
+    number = 1
+    text = ''
+    for url in meow:
+      text = text + number + ') ' + url + '\n'
+      number += 1
       
       
-    update.message.reply_text("ВОт последние 10 ссылок, которые я сократил для тебя\n",meow)
+    update.message.reply_text(meow)
 
 
 def message(update, context):
