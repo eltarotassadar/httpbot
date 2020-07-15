@@ -60,8 +60,8 @@ class DatabaseUseage:
     self.users = self.database.cursor()
     
   
-  def add_user(self, id):
-        self.users.execute('INSERT INTO user_id VALUES("' + id + '")')
+  def adding(self, id):
+        self.users.execute('INSERT INTO url_list(id, user_id, abbr_url) VALUES("' + id +'", "' + shortened_url + '")')
         self.database.commit()
   
       
