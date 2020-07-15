@@ -42,6 +42,7 @@ def help(update, context):
 def show(update, context):
     base = DatabaseUseage()
     meow = base.show(str(update.message.from_user.id))
+    meow = map(str, meow)
 #     number = 1
 #     text = ''
 #     for url in meow:
