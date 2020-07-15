@@ -54,10 +54,15 @@ def error(update, context):
 #-----------------Inner Logic-------------------
  
 class DatabaseUseage:
-  def __init__(self):
-    self.database = sql.connect('Users.db')
-    self.users = self.database.cursor()
   
+  def __init__(self):
+    self.database = sql.connect('url-s.db')
+    self.users = self.database.cursor()
+    
+  
+  def add_user(self, id):
+        self.users.execute('INSERT INTO user_id VALUES("' + id + '")')
+        self.database.commit()
   
       
         
