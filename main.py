@@ -1,12 +1,13 @@
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, dispatcher
+from relink.client import RelinkClient
+import sqlite3 as sql
 import logging
 import re
 import os
 import telegram
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, dispatcher
-from relink.client import RelinkClient
 
 
-
+#variables-------------------------------------
 
 PORT = int(os.environ.get('PORT', 5000))
 
@@ -16,7 +17,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-
+#-----------------Telegram Bot-----------------
 
 def start(update, context):
     'Что же произойдет, когда будет дана команда /start ?'
@@ -30,21 +31,10 @@ def start(update, context):
                               "Успехов! :)", parse_mode=telegram.ParseMode.MARKDOWN)
 
 
-
 def help(update, context):
     'Как бот поможет, если пользователь введет команду /help ?'
-    update.message.reply_text("Отправь мне URL ссылку, а я ее сокращу до приемлемых. Все просто!\n"
+    update.message.reply_text("Отправь мне URL ссылку, а я ее сокращу до приемлемых размеров. Все просто!\n"
                               "А если тебе вдруг понадобятся последние 10 ссылок, которые я для тебя сократил, то введи команду\n")
-
-
-
-
-    
-
-
-
-
-
 
 
 
@@ -56,17 +46,25 @@ def message(update, context):
   update.message.reply_text("Вот твоя сокращенная ссылка - " + shortened_url)
   
   
- 
-
-
-
-
 
 def error(update, context):
   logger.warning('Update "%s" caused error "%s"', update, context.error)
   
-    
+  
+#-----------------Inner Logic-------------------
+ 
+class DatabaseUseage:
+  def __init__(self):
+    self.database = sql.connect('Users.db')
+    self.users = self.database.cursor()
+  
+  
+      
+        
+  
+  
 
+#-----------------Start App---------------------
 
 
 def get_answer():
