@@ -44,6 +44,7 @@ def help(update, context):
 def show(update, context):
     base = DatabaseUseage()
     base.show()
+    
 
 
 def message(update, context):
@@ -71,7 +72,9 @@ class DatabaseUseage():
         self.database.commit()
 
     def show(self, id, user_id):
-        self.users.execute('SELECT TOP 10 * FROM url_list WHERE user_id = "' + id + '" ORDER BY "' + user_id + '" ').fetchall()
+        result = self.users.execute('SELECT TOP 10 * FROM url_list WHERE user_id = "' + id + '" ORDER BY "' + user_id + '" ').fetchall()
+        return result
+        
 
 
 # -----------------Start App---------------------
