@@ -42,7 +42,14 @@ def help(update, context):
 def show(update, context):
     base = DatabaseUseage()
     meow = base.show(str(update.message.from_user.id))
-    update.message.reply_text(meow) #MarkDown
+    number = 1
+    text = ''
+    for url in meow:
+      text += number + ') ' + url[0] + '\n'
+      number += 1
+      
+      
+    update.message.reply_text("Вот последние 10 ссылок, которые я для тебя сократил\n" + text)
 
 
 def message(update, context):
@@ -73,7 +80,7 @@ class DatabaseUseage():
         self.database.commit()
 
     def show(self, id):
-        result = self.users.execute('SELECT * FROM url_list WHERE user_id = "' + id + '" ORDER BY id DESC LIMIT 10').fetchall()
+        result = self.users.execute('SELECT abbr_url FROM url_list WHERE user_id = "' + id + '" ORDER BY id DESC LIMIT 10').fetchall()
         return result
         
 
