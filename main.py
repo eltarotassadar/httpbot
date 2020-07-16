@@ -2,7 +2,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, dispa
 from relink.client import RelinkClient
 import sqlite3 as sql
 import logging
-import re
 import os
 import telegram
 
@@ -20,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def start(update, context):
     'Что же произойдет, когда будет дана команда /start ?'
-   
+
     update.message.reply_text("*Привет!*\n"
                               "Я бот, который сокращает ссылки.\n"
                               "Зачем это нужно? Здесь ответы - https://rel.ink/kbvZpP (а вот и пример сокращенной ссылки!).\n"
@@ -31,30 +30,25 @@ def start(update, context):
 
 
 def help(update, context):
-  
     'Как бот поможет, если пользователь введет команду /help ?'
     update.message.reply_text("Отправь мне URL ссылку, а я ее сокращу до приемлемых размеров. Все просто!\n"
                               "А если тебе вдруг понадобятся последние 10 ссылок, которые я для тебя сократил, то введи команду /show\n")
 
-
-
+# показываем 10 последних ссылок
 
 def show(update, context):
     base = DatabaseUseage()
-    meow = base.show(str(update.message.from_user.id))
-    meow = map(str, meow)
-#     number = 1
-#     text = ''
-#     for url in meow:
-#       text = text + number + ') ' + url + '\n'
-#       number += 1
-      
-      
-    update.message.reply_text(meow)
+    result_show = base.show(str(update.message.from_user.id))
+    text = 'Вот последние 10 ссылок, которые я для тебя сократил:\n'
+    number = 1
+    for meow in result_show:
+        text = text + str(number) + ') ' + meow[0] + '\n'
+        number += 1
+    update.message.reply_text(text)
 
+# отвечаем пользователю
 
 def message(update, context):
-    
     text = update.message.text
     client = RelinkClient()
     shortened_url = client.shorten_url(text)
@@ -81,9 +75,9 @@ class DatabaseUseage():
         self.database.commit()
 
     def show(self, id):
-        result = self.users.execute('SELECT abbr_url FROM url_list WHERE user_id = "' + id + '" ORDER BY id DESC LIMIT 10').fetchall()
+        result = self.users.execute(
+            'SELECT abbr_url FROM url_list WHERE user_id = "' + id + '" ORDER BY id DESC LIMIT 10').fetchall()
         return result
-        
 
 
 # -----------------Start App---------------------
@@ -91,12 +85,9 @@ class DatabaseUseage():
 
 def get_answer():
     """Start the bot."""
-    # Create the Updater and pass it your bot's token.
-    # Make sure to set use_context=True to use the new context based callbacks
-    # Post version 12 this will no longer be necessary
+   
     updater = Updater("1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw", use_context=True)
 
-    # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
     # хендлеры под /start, /help и /show
@@ -115,9 +106,6 @@ def get_answer():
                           port=int(PORT),
                           url_path='1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
     updater.bot.setWebhook('https://httpdwhbot.herokuapp.com/' + '1399486062:AAHCrL0p23QCLoPHSdt_9GDdQUBNpZYGMtw')
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
 
 
