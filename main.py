@@ -39,12 +39,12 @@ def help(update, context):
 def show(update, context):
     base = DatabaseUseage()
     result_show = base.show(str(update.message.from_user.id))
-    text = 'Вот последние 10 ссылок, которые я для тебя сократил:\n'
+    text = ''
     number = 1
     for meow in result_show:
         text = text + str(number) + ') ' + meow[0] + '\n'
         number += 1
-    update.message.reply_text(text)
+    update.message.reply_text(Вот последние 10 ссылок, которые я для тебя сократил:\n + text)
 
 
 # отвечаем пользователю
