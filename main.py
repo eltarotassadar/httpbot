@@ -77,7 +77,7 @@ class DatabaseUseage():
 
     def show(self, id):
         result = self.users.execute(
-            'SELECT abbr_url FROM url_list WHERE user_id = "' + id + '" ORDER BY id DESC LIMIT 10').fetchall()
+            'SELECT abbr_url FROM url_list WHERE user_id = "' + id + '" ORDER BY id LIMIT 10').fetchall()
         return result
 
 
